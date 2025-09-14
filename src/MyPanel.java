@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 public class MyPanel extends JPanel implements MouseListener {
 
@@ -141,6 +142,7 @@ public class MyPanel extends JPanel implements MouseListener {
                     ui[current_x][current_y] = null;
                     gamestate = 0;
                     current_selected = null;
+                    possibleMoves = null;
                 }
             }
             else {
@@ -155,6 +157,13 @@ public class MyPanel extends JPanel implements MouseListener {
             }
         }
         repaint();
+        if(possibleMoves != null){
+            for(int i = 0; i < possibleMoves.length; i++){
+                System.out.println(Arrays.toString(possibleMoves[i]));
+            }
+        } else {
+            System.out.println("No possible Moves!");
+        }
     }
 
 
