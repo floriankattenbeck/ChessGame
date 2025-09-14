@@ -1,10 +1,8 @@
-import javax.naming.Name;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 
 public class MyPanel extends JPanel implements MouseListener {
 
@@ -26,7 +24,6 @@ public class MyPanel extends JPanel implements MouseListener {
     NamedImage light_queen = new NamedImage("pieces/light_queen");
     NamedImage dark_queen = new NamedImage("pieces/dark_queen");
     NamedImage light_bishop = new NamedImage("pieces/light_bishop");
-
     NamedImage dark_bishop = new NamedImage("pieces/dark_bishop");
     NamedImage border_green = new NamedImage("ui/border_green");
     NamedImage border_yellow = new NamedImage("ui/border_yellow");
@@ -52,6 +49,7 @@ public class MyPanel extends JPanel implements MouseListener {
         board[7][7] = new Queen(light_queen, "light_queen", LIGHT);
         board[7][4] = new Queen(light_queen, "light_queen", LIGHT);
         board[6][3] = new Bishop(light_bishop, "light_bishop", LIGHT);
+        board[0][0] = new Bishop(dark_bishop, "dark_bishop", DARK);
     }
 
     public void paint(Graphics g) {
