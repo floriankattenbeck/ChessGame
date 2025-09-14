@@ -77,12 +77,9 @@ public class MyPanel extends JPanel implements MouseListener {
                 if (ui[i][ii] != null) {
                     DrawOnBoard(ui[i][ii].namedImage.getImage(), i, ii);
                 }
-            }
-        }
 
-        if(gamestate == 1 && possibleMoves != null){
-            for (int i = 0; i < SQUARE_COUNT; i++) {
-                for (int ii = 0; ii < SQUARE_COUNT; ii++) {
+                //gamestate specific
+                if(gamestate == 1 && possibleMoves != null){
                     if(possibleMoves[i][ii] == 1){
                         DrawOnBoard(dot.getImage(), i, ii);
                     }
@@ -92,6 +89,7 @@ public class MyPanel extends JPanel implements MouseListener {
                 }
             }
         }
+
     }
 
     private void DrawOnBoard(BufferedImage bufferedImage, int x, int y) {
