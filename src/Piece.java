@@ -29,9 +29,9 @@ public class Piece {
         }
         int startx = current_x;
         int starty = current_y;
-        for (int i = 0; i < moveset.length; i++) {
-            int xdir = moveset[i][0];
-            int ydir = moveset[i][1];
+        for (int[] ints : moveset) {
+            int xdir = ints[0];
+            int ydir = ints[1];
             current_x = startx;
             current_y = starty;
 
@@ -74,8 +74,6 @@ public class Piece {
                 }
             }
         }
-
-
         return possibleMoves;
     }
 }
