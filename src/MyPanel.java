@@ -158,8 +158,8 @@ public class MyPanel extends JPanel implements MouseListener {
         }
         repaint();
         if(possibleMoves != null){
-            for(int i = 0; i < possibleMoves.length; i++){
-                System.out.println(Arrays.toString(possibleMoves[i]));
+            for (int[] possibleMove : possibleMoves) {
+                System.out.println(Arrays.toString(possibleMove));
             }
         } else {
             System.out.println("No possible Moves!");
