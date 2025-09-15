@@ -4,6 +4,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
+import java.util.Stack;
 
 public class MyPanel extends JPanel implements MouseListener {
 
@@ -35,6 +36,7 @@ public class MyPanel extends JPanel implements MouseListener {
     Piece[][] board = new Piece[SQUARE_COUNT][SQUARE_COUNT];
     UIElement[][] ui = new UIElement[SQUARE_COUNT][SQUARE_COUNT];
     int[][] possibleMoves = new int[SQUARE_COUNT][SQUARE_COUNT];
+    Stack<Move> moveHistory = new Stack<>();
 
     MyPanel() {
         this.setPreferredSize(new Dimension(WIDTH, HEIGTH));
@@ -51,6 +53,9 @@ public class MyPanel extends JPanel implements MouseListener {
         board[7][4] = new Queen(light_queen, "light_queen", LIGHT);
         board[6][3] = new Bishop(light_bishop, "light_bishop", LIGHT);
         board[0][0] = new Bishop(dark_bishop, "dark_bishop", DARK);
+
+
+        moveHistory.add(new Move(board[0][0], 0, 0, null, 1, 1));
     }
 
     public void paint(Graphics g) {
@@ -94,6 +99,30 @@ public class MyPanel extends JPanel implements MouseListener {
     private void DrawOnBoard(BufferedImage bufferedImage, int x, int y) {
         g2D.drawImage(bufferedImage, x * SQUARE_SIZE, y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE, this);
     }
+    private void Take(){
+
+    }
+    private void Undo(){
+        Move lastMove = moveHistory.pop();
+        board[lastMove.firstx][lastMove.firsty] = lastMove.firstPiece;
+        board[lastMove.secondx][lastMove.secondy] = lastMove.secondPiece;
+        gamestate = 0;
+        repaint();
+    }
+
+    private void SelectSquare(){
+        ui[current_x][current_y] = new UIElement(border_yellow, "border_yellow");
+        gamestate = 1;
+        possibleMoves = board[current_x][current_y].CalculatePossibleMoves(board, current_x, current_y);
+        if(current_selected!=null){
+            if(current_selected.id != board[current_x][current_y].id){
+                ui[current_selected_x][current_selected_y] = null;
+            }
+        }
+        current_selected = board[current_x][current_y];
+        current_selected_x = current_x;
+        current_selected_y = current_y;
+    }
 
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -117,26 +146,16 @@ public class MyPanel extends JPanel implements MouseListener {
         }
 
         if (e.getButton() == LEFTCLICK) {
+            //befindet sich dort eine Figur in deiner Farbe?
             if (board[current_x][current_y] == null || board[current_x][current_y].color != current_turn) {
                 return;
             }
-
+            //prüft ob das Feld markiert ist und setzt den selected gamestate ein (=1)
             if (ui[current_x][current_y] == null) {
-                ui[current_x][current_y] = new UIElement(border_yellow, "border_yellow");
-                gamestate = 1;
-                possibleMoves = board[current_x][current_y].CalculatePossibleMoves(board, current_x, current_y);
-                if(current_selected!=null){
-                    if(current_selected.id != board[current_x][current_y].id){
-                        ui[current_selected_x][current_selected_y] = null;
-                    }
-                }
-
-
-                current_selected = board[current_x][current_y];
-                current_selected_x = current_x;
-                current_selected_y = current_y;
-
+                SelectSquare();
             }
+
+            //Falls es schon selected ist (=1) setze selected wieder =0
             else if(ui[current_x][current_y].name.equals("border_yellow")) {
                 if(current_selected.id == board[current_x][current_y].id){
                     ui[current_x][current_y] = null;
@@ -145,25 +164,18 @@ public class MyPanel extends JPanel implements MouseListener {
                     possibleMoves = null;
                 }
             }
-            else {
-                ui[current_x][current_y] = new UIElement(border_yellow, "border_yellow");
-                gamestate = 1;
-                possibleMoves = board[current_x][current_y].CalculatePossibleMoves(board, current_x, current_y);
-                ui[current_selected_x][current_selected_y] = null;
-                current_selected = board[current_x][current_y];
-                current_selected_x = current_x;
-                current_selected_y = current_y;
+        }
 
-            }
-        }
+
+
         repaint();
-        if(possibleMoves != null){
-            for (int[] possibleMove : possibleMoves) {
-                System.out.println(Arrays.toString(possibleMove));
-            }
-        } else {
-            System.out.println("No possible Moves!");
-        }
+//        if(possibleMoves != null){
+//            for (int[] possibleMove : possibleMoves) {
+//                System.out.println(Arrays.toString(possibleMove));
+//            }
+//        } else {
+//            System.out.println("No possible Moves!");
+//        }
     }
 
 
