@@ -3,7 +3,6 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 import java.util.Stack;
 
 public class MyPanel extends JPanel implements MouseListener {
@@ -99,29 +98,22 @@ public class MyPanel extends JPanel implements MouseListener {
     private void DrawOnBoard(BufferedImage bufferedImage, int x, int y) {
         g2D.drawImage(bufferedImage, x * SQUARE_SIZE, y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE, this);
     }
-    private void Take(){
-
-    }
     private void Undo(){
-        Move lastMove = moveHistory.pop();
-        board[lastMove.firstx][lastMove.firsty] = lastMove.firstPiece;
-        board[lastMove.secondx][lastMove.secondy] = lastMove.secondPiece;
-        gamestate = 0;
-        repaint();
+        if (!moveHistory.isEmpty()) {
+            Move lastMove = moveHistory.pop();
+            board[lastMove.firstx][lastMove.firsty] = lastMove.firstPiece;
+            board[lastMove.secondx][lastMove.secondy] = lastMove.secondPiece;
+            gamestate = 0;
+            resetSelect();
+            repaint();
+        }
     }
 
-    private void SelectSquare(){
-        ui[current_x][current_y] = new UIElement(border_yellow, "border_yellow");
-        gamestate = 1;
-        possibleMoves = board[current_x][current_y].CalculatePossibleMoves(board, current_x, current_y);
-        if(current_selected!=null){
-            if(current_selected.id != board[current_x][current_y].id){
-                ui[current_selected_x][current_selected_y] = null;
-            }
-        }
-        current_selected = board[current_x][current_y];
-        current_selected_x = current_x;
-        current_selected_y = current_y;
+    private void resetSelect(){
+        ui[current_selected_x][current_selected_y] = null;
+        gamestate = 0;
+        current_selected = null;
+        possibleMoves = null;
     }
 
     @Override
@@ -136,43 +128,73 @@ public class MyPanel extends JPanel implements MouseListener {
         current_y = (e.getY() - this.getY()) / SQUARE_SIZE;
 
         if (e.getButton() == RIGHTCLICK) {
-            if (ui[current_x][current_y] == null) {
-                ui[current_x][current_y] = new UIElement(border_green, "border_green");
-            } else {
-                if (ui[current_x][current_y].name.equals("border_green")) {
-                    ui[current_x][current_y] = null;
-                }
-            }
+//            if (ui[current_x][current_y] == null) {
+//                ui[current_x][current_y] = new UIElement(border_green, "border_green");
+//            } else {
+//                if (ui[current_x][current_y].name.equals("border_green")) {
+//                    ui[current_x][current_y] = null;
+//                }
+//            }
+            Undo();
         }
 
+
         if (e.getButton() == LEFTCLICK) {
+            //prüfe, ob eine possiblemoves 1 oder 2 ausgewählt wurde
+            if(gamestate == 1 && (possibleMoves[current_x][current_y] == 2 || possibleMoves[current_x][current_y] == 1)){
+                //aktuelle figur, position, destinationfigur und position davon auf den stack
+                moveHistory.add(new Move(board[current_selected_x][current_selected_y], current_selected_x, current_selected_y, board[current_x][current_y], current_x, current_y));
+                board[current_x][current_y] = board[current_selected_x][current_selected_y];
+                board[current_selected_x][current_selected_y] = null;
+                resetSelect();
+                System.out.println("Move-Abfrage");
+            }
+
             //befindet sich dort eine Figur in deiner Farbe?
-            if (board[current_x][current_y] == null || board[current_x][current_y].color != current_turn) {
+            else if (board[current_x][current_y] == null || board[current_x][current_y].color != current_turn) {
+                //WICHTIG AB HIER NUR NOCH SELECT LOGIK
+                System.out.println("return-Abfrage");
                 return;
             }
             //prüft ob das Feld markiert ist und setzt den selected gamestate ein (=1)
-            if (ui[current_x][current_y] == null) {
-                SelectSquare();
+            else if (ui[current_x][current_y] == null) {
+                System.out.println("selectsquare-Abfrage");
+                //select square, put it in gamestate = 1
+                ui[current_x][current_y] = new UIElement(border_yellow, "border_yellow");
+                gamestate = 1;
+                possibleMoves = board[current_x][current_y].CalculatePossibleMoves(board, current_x, current_y);
+                if(current_selected!=null){
+                    if(current_selected.id != board[current_x][current_y].id){
+                        //deselect old square
+                        System.out.println("dazu noch deselect!");
+                        ui[current_selected_x][current_selected_y] = null;
+                    }
+                }
+                //update the current_selected values to new selected
+                current_selected = board[current_x][current_y];
+                current_selected_x = current_x;
+                current_selected_y = current_y;
             }
 
             //Falls es schon selected ist (=1) setze selected wieder =0
             else if(ui[current_x][current_y].name.equals("border_yellow")) {
                 if(current_selected.id == board[current_x][current_y].id){
-                    ui[current_x][current_y] = null;
-                    gamestate = 0;
-                    current_selected = null;
-                    possibleMoves = null;
+                    resetSelect();
+                    System.out.println("deselect square selbes feld-Abfrage");
                 }
             }
+
+
         }
-
-
-
         repaint();
 //        if(possibleMoves != null){
 //            for (int[] possibleMove : possibleMoves) {
 //                System.out.println(Arrays.toString(possibleMove));
 //            }
+//            System.out.println(possibleMoves[current_x][current_y]);
+//            System.out.println("x: "+current_x);
+//            System.out.println("y: "+current_y);
+//            System.out.println("button: "+e.getButton());
 //        } else {
 //            System.out.println("No possible Moves!");
 //        }
