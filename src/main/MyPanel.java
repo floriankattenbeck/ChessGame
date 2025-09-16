@@ -139,7 +139,6 @@ public class MyPanel extends JPanel implements MouseListener {
             board[6][7] = new Knight(light_knight, "light_knight", LIGHT);
             board[7][7] = new Rook(light_rook, "light_rook", LIGHT);
         }
-        board[3][3] = new Pawn(dark_pawn, "dark_pawn", DARK);
     }
 
     public void paint(Graphics g) {

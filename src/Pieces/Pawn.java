@@ -33,7 +33,8 @@ public class Pawn extends Piece {
                 continue;
             }
             if (board[startx][starty].color != gm.startColor) {
-                current_y = starty - moveDirection.y;
+                moveDirection.y = 1;
+                current_y = starty + moveDirection.y;
             }
             if (board[current_x][current_y] == null && moveDirection.x == 0) {
                 //mark it a 1 for free square
