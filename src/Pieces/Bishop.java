@@ -1,5 +1,9 @@
+package Pieces;
+
+import main.NamedImage;
+
 public class Bishop extends Piece{
-    Bishop(NamedImage image, String name, int color) {
+    public Bishop(NamedImage image, String name, int color) {
         super(image, name, color);
         character = 'B';
         moveset = new int[2][2];

@@ -1,5 +1,9 @@
+package Pieces;
+
+import main.NamedImage;
+
 public class Rook extends Piece{
-    Rook(NamedImage image, String name, int color) {
+    public Rook(NamedImage image, String name, int color) {
         super(image, name, color);
         character = 'K';
         moveset = new int[2][2];

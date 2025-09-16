@@ -1,3 +1,5 @@
+package main;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -7,10 +9,6 @@ public class NamedImage {
     private String path;
     private BufferedImage image;
 
-    public NamedImage(String path, BufferedImage image) {
-        this.path = path;
-        this.image = image;
-    }
     public NamedImage(String path) {
         this.path = path;
         this.image = LoadImage();

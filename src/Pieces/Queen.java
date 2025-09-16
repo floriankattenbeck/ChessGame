@@ -1,5 +1,9 @@
+package Pieces;
+
+import main.NamedImage;
+
 public class Queen extends Piece {
-    Queen(NamedImage image, String name, int color) {
+    public Queen(NamedImage image, String name, int color) {
         super(image, name, color);
         character = 'Q';
         moveset = new int[4][2];

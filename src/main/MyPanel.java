@@ -1,3 +1,10 @@
+package main;
+
+import Pieces.Bishop;
+import Pieces.Piece;
+import Pieces.Queen;
+import Pieces.Rook;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -153,7 +160,7 @@ public class MyPanel extends JPanel implements MouseListener {
         SwitchTurn();
         //update global gamestate
 
-        System.out.println("Move-Abfrage");
+        System.out.println("main.Move-Abfrage");
     }
 
     private void SelectPiece(){
@@ -196,7 +203,7 @@ public class MyPanel extends JPanel implements MouseListener {
 
         if (e.getButton() == RIGHTCLICK) {
 //            if (ui[current_x][current_y] == null) {
-//                ui[current_x][current_y] = new UIElement(border_green, "border_green");
+//                ui[current_x][current_y] = new main.UIElement(border_green, "border_green");
 //            } else {
 //                if (ui[current_x][current_y].name.equals("border_green")) {
 //                    ui[current_x][current_y] = null;

@@ -1,7 +1,11 @@
+package main;
+
+import Pieces.Piece;
+
 import java.util.ArrayList;
 
 public class GameManager {
-    final int SQUARE_COUNT = 8;
+    public final int SQUARE_COUNT = 8;
     final int SQUARE_SIZE = 80;
     final int WIDTH = SQUARE_SIZE * SQUARE_COUNT;
     final int HEIGTH = SQUARE_SIZE * SQUARE_COUNT;

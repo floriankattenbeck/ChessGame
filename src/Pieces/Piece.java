@@ -1,16 +1,20 @@
+package Pieces;
+
 import java.util.UUID;
+import main.NamedImage;
+import main.GameManager;
 
 
 public class Piece {
 
-    NamedImage namedImage;
-    String name;
-    char character;
-    int color;
+    public NamedImage namedImage;
+    public String name;
+    public char character;
+    public int color;
     GameManager gm;
-    int[][] moveset;
-    UUID id;
-    int value;
+    public int[][] moveset;
+    public UUID id;
+    public int value;
 
     Piece(NamedImage namedImage, String name, int color) {
         this.namedImage = namedImage;
@@ -21,7 +25,7 @@ public class Piece {
         id = UUID.randomUUID();
     }
 
-    int[][] CalculatePossibleMoves(Piece[][] board, int current_x, int current_y) {
+    public int[][] CalculatePossibleMoves(Piece[][] board, int current_x, int current_y) {
         int[][] possibleMoves = new int[gm.SQUARE_COUNT][gm.SQUARE_COUNT];
         for (int i = 0; i < gm.SQUARE_COUNT; i++) {
             for (int ii = 0; ii < gm.SQUARE_COUNT; ii++) {

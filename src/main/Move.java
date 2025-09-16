@@ -1,3 +1,7 @@
+package main;
+
+import Pieces.Piece;
+
 public class Move {
     Piece firstPiece;
     int firstx;
