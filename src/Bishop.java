@@ -3,6 +3,7 @@ public class Bishop extends Piece{
         super(image, name, color);
         character = 'B';
         moveset = new int[2][2];
+        value = 3;
         //werde das bald eleganter Lösen
         //das moveset beschreibt, in welche Richtugen sich die Figur bewegen darf, dabei ist moveset[i][0] -> x-Komponente
         //                                                                                   moveset[i][1] -> y-Komponente

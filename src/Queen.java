@@ -3,6 +3,7 @@ public class Queen extends Piece {
         super(image, name, color);
         character = 'Q';
         moveset = new int[4][2];
+        value = 9;
         //werde das bald eleganter Lösen
         //das moveset beschreibt, in welche Richtugen sich die Figur bewegen darf, dabei ist moveset[i][0] -> x-Komponente
         //                                                                                   moveset[i][1] -> y-Komponente

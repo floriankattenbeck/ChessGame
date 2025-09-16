@@ -10,6 +10,7 @@ public class Piece {
     GameManager gm;
     int[][] moveset;
     UUID id;
+    int value;
 
     Piece(NamedImage namedImage, String name, int color) {
         this.namedImage = namedImage;
@@ -75,5 +76,9 @@ public class Piece {
             }
         }
         return possibleMoves;
+    }
+
+    public int getValue(){
+        return value;
     }
 }
