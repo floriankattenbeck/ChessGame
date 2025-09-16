@@ -29,6 +29,7 @@ public class MyPanel extends JPanel implements MouseListener {
     NamedImage dark_queen = new NamedImage("pieces/dark_queen");
     NamedImage light_bishop = new NamedImage("pieces/light_bishop");
     NamedImage dark_bishop = new NamedImage("pieces/dark_bishop");
+    NamedImage dark_rook = new NamedImage("pieces/dark_rook");
     NamedImage border_green = new NamedImage("ui/border_green");
     NamedImage border_yellow = new NamedImage("ui/border_yellow");
     NamedImage light_square = new NamedImage("ui/light_square");
@@ -56,9 +57,7 @@ public class MyPanel extends JPanel implements MouseListener {
         board[7][4] = new Queen(light_queen, "light_queen", LIGHT);
         board[6][3] = new Bishop(light_bishop, "light_bishop", LIGHT);
         board[0][0] = new Bishop(dark_bishop, "dark_bishop", DARK);
-
-
-        moveHistory.add(new Move(board[0][0], 0, 0, null, 1, 1));
+        board[1][1] = new Rook(dark_rook, "dark_rook", DARK);
     }
 
     public void paint(Graphics g) {
