@@ -1,8 +1,10 @@
 package Pieces;
 
 import java.util.UUID;
+
 import main.NamedImage;
 import main.GameManager;
+import main.Vector2;
 
 
 public class Piece {
@@ -11,18 +13,19 @@ public class Piece {
     public String name;
     public char character;
     public int color;
-    GameManager gm;
-    public int[][] moveset;
+    public GameManager gm;
+    public Vector2[] moveDirections;
     public UUID id;
     public int value;
+    public int moveCount;
 
     Piece(NamedImage namedImage, String name, int color) {
         this.namedImage = namedImage;
         this.name = name;
         this.color = color;
         gm = new GameManager();
-        moveset = null;
         id = UUID.randomUUID();
+        this.moveCount = 0;
     }
 
     public int[][] CalculatePossibleMoves(Piece[][] board, int current_x, int current_y) {
@@ -34,17 +37,15 @@ public class Piece {
         }
         int startx = current_x;
         int starty = current_y;
-        for (int[] ints : moveset) {
-            int xdir = ints[0];
-            int ydir = ints[1];
+        for (Vector2 moveDirection : moveDirections) {
             current_x = startx;
             current_y = starty;
 
             int dirChanged = 0;
 
             while (dirChanged < 2) {
-                current_x += xdir;
-                current_y += ydir;
+                current_x += moveDirection.x;
+                current_y += moveDirection.y;
 
                 if (current_x == startx && current_y == starty) {
                     continue;
@@ -56,8 +57,8 @@ public class Piece {
                     if (dirChanged == 2) {
                         break;
                     }
-                    xdir = xdir * -1;
-                    ydir = ydir * -1;
+                    moveDirection.x = moveDirection.x * -1;
+                    moveDirection.y = moveDirection.y * -1;
                     continue;
                 }
 
@@ -74,15 +75,19 @@ public class Piece {
                     if (dirChanged == 2) {
                         break;
                     }
-                    xdir = xdir * -1;
-                    ydir = ydir * -1;
+                    moveDirection.x = moveDirection.x * -1;
+                    moveDirection.y = moveDirection.y * -1;
                 }
             }
         }
         return possibleMoves;
     }
 
-    public int getValue(){
+    public int getValue() {
         return value;
+    }
+
+    public void increaseMoveCountBy(int amount) {
+        moveCount += amount;
     }
 }

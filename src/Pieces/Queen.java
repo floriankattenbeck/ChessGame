@@ -1,24 +1,22 @@
 package Pieces;
 
 import main.NamedImage;
+import main.Vector2;
 
 public class Queen extends Piece {
     public Queen(NamedImage image, String name, int color) {
         super(image, name, color);
         character = 'Q';
-        moveset = new int[4][2];
         value = 9;
-        //werde das bald eleganter Lösen
-        //das moveset beschreibt, in welche Richtugen sich die Figur bewegen darf, dabei ist moveset[i][0] -> x-Komponente
-        //                                                                                   moveset[i][1] -> y-Komponente
-        moveset[0][0] = 1;
-        moveset[0][1] = 1;
-        moveset[1][0] = 1;
-        moveset[1][1] = -1;
-        moveset[2][0] = 1;
-        moveset[2][1] = 0;
-        moveset[3][0] = 0;
-        moveset[3][1] = 1;
+        moveDirections = new Vector2[8];
+        moveDirections[0] = new Vector2(1, 1);
+        moveDirections[1] = new Vector2(1, -1);
+        moveDirections[2] = new Vector2(1, 0);
+        moveDirections[3] = new Vector2(0, 1);
+        moveDirections[4] = new Vector2(0, -1);
+        moveDirections[5] = new Vector2(-1, -1);
+        moveDirections[6] = new Vector2(-1, 0);
+        moveDirections[7] = new Vector2(-1, 1);
 
     }
 
