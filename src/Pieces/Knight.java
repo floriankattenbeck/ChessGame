@@ -1,12 +1,13 @@
 package Pieces;
 
+import main.MyPanel;
 import main.NamedImage;
 import main.Vector2;
 
 public class Knight extends Piece{
 
-    public Knight(NamedImage image, String name, int color) {
-        super(image, name, color);
+    public Knight(NamedImage image, String name, int color, MyPanel panel) {
+        super(image, name, color, panel);
         character = 'N';
         value = 3;
         this.moveCount = 0;
@@ -16,7 +17,7 @@ public class Knight extends Piece{
     }
 
     @Override
-    public int[][] CalculatePossibleMoves(Piece[][] board, int current_x, int current_y) {
+    public int[][] CalculatePossibleMoves(int current_x, int current_y) {
         int[][] possibleMoves = new int[gm.SQUARE_COUNT][gm.SQUARE_COUNT];
         for (int i = 0; i < gm.SQUARE_COUNT; i++) {
             for (int ii = 0; ii < gm.SQUARE_COUNT; ii++) {

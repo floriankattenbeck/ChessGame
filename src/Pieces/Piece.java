@@ -2,9 +2,7 @@ package Pieces;
 
 import java.util.UUID;
 
-import main.NamedImage;
-import main.GameManager;
-import main.Vector2;
+import main.*;
 
 
 public class Piece {
@@ -18,17 +16,21 @@ public class Piece {
     public UUID id;
     public int value;
     public int moveCount;
+    public Piece[][] board;
+    public MyPanel panel;
 
-    Piece(NamedImage namedImage, String name, int color) {
+    Piece(NamedImage namedImage, String name, int color,  MyPanel panel) {
         this.namedImage = namedImage;
         this.name = name;
         this.color = color;
         gm = new GameManager();
         id = UUID.randomUUID();
         this.moveCount = 0;
+        this.board = panel.board;
+        this.panel = panel;
     }
 
-    public int[][] CalculatePossibleMoves(Piece[][] board, int current_x, int current_y) {
+    public int[][] CalculatePossibleMoves(int current_x, int current_y) {
         int[][] possibleMoves = new int[gm.SQUARE_COUNT][gm.SQUARE_COUNT];
         for (int i = 0; i < gm.SQUARE_COUNT; i++) {
             for (int ii = 0; ii < gm.SQUARE_COUNT; ii++) {
@@ -89,5 +91,8 @@ public class Piece {
 
     public void increaseMoveCountBy(int amount) {
         moveCount += amount;
+    }
+    public void SpecialMove(int current_x, int current_y){
+        //
     }
 }

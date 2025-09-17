@@ -1,11 +1,12 @@
 package Pieces;
 
+import main.MyPanel;
 import main.NamedImage;
 import main.Vector2;
 
 public class Pawn extends Piece {
-    public Pawn(NamedImage image, String name, int color) {
-        super(image, name, color);
+    public Pawn(NamedImage image, String name, int color, MyPanel panel) {
+        super(image, name, color, panel);
         character = 'P';
         value = 1;
         moveDirections = new Vector2[3];
@@ -15,7 +16,7 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public int[][] CalculatePossibleMoves(Piece[][] board, int current_x, int current_y) {
+    public int[][] CalculatePossibleMoves(int current_x, int current_y) {
         int[][] possibleMoves = new int[gm.SQUARE_COUNT][gm.SQUARE_COUNT];
         for (int i = 0; i < gm.SQUARE_COUNT; i++) {
             for (int ii = 0; ii < gm.SQUARE_COUNT; ii++) {

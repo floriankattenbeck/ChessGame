@@ -7,8 +7,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Stack;
+import java.util.*;
 
 public class MyPanel extends JPanel implements MouseListener {
 
@@ -26,8 +25,8 @@ public class MyPanel extends JPanel implements MouseListener {
     int current_x = 0;
     int current_y = 0;
     Piece current_selected = null;
-    int current_selected_x = 0;
-    int current_selected_y = 0;
+    public int current_selected_x = 0;
+    public int current_selected_y = 0;
     int score = gm.score;
     NamedImage light_queen = new NamedImage("pieces/light_queen");
     NamedImage dark_queen = new NamedImage("pieces/dark_queen");
@@ -47,10 +46,11 @@ public class MyPanel extends JPanel implements MouseListener {
     NamedImage dark_square = new NamedImage("ui/dark_square");
     NamedImage dot = new NamedImage("ui/dot");
     NamedImage border_red = new NamedImage("ui/border_red");
-    Piece[][] board = new Piece[SQUARE_COUNT][SQUARE_COUNT];
+    public Piece[][] board = new Piece[SQUARE_COUNT][SQUARE_COUNT];
     UIElement[][] ui = new UIElement[SQUARE_COUNT][SQUARE_COUNT];
     int[][] possibleMoves = new int[SQUARE_COUNT][SQUARE_COUNT];
-    Stack<Move> moveHistory = new Stack<>();
+    public Stack<Queue<Move>> moveHistory = new Stack<>();
+
     ArrayList<Piece> takenPieces = gm.takenPieces;
 
     MyPanel() {
@@ -61,7 +61,15 @@ public class MyPanel extends JPanel implements MouseListener {
     }
 
     private void SetupBoard() {
-
+        board[7][7] = new Rook(light_rook, "light_rook", LIGHT, this);
+        //board[6][7] = new Queen(light_queen, "light_queen", LIGHT, this);
+        board[0][7] = new Rook(light_rook, "light_rook", LIGHT, this);
+        board[4][7] = new King(light_king, "light_king", LIGHT, this);
+        board[7][0] = new Rook(dark_rook, "dark_rook", DARK, this);
+        board[0][0] = new Rook(dark_rook, "dark_rook", DARK, this);
+        board[4][0] = new King(dark_king, "dark_king", DARK, this);
+        System.out.println(" sc" + gm.startColor);
+        /*
         if (current_turn == DARK) {
 
             //CHATGPT TEST CODE
@@ -139,6 +147,8 @@ public class MyPanel extends JPanel implements MouseListener {
             board[6][7] = new Knight(light_knight, "light_knight", LIGHT);
             board[7][7] = new Rook(light_rook, "light_rook", LIGHT);
         }
+
+         */
     }
 
     public void paint(Graphics g) {
@@ -166,13 +176,17 @@ public class MyPanel extends JPanel implements MouseListener {
                 }
 
                 //gamestate specific
-                if (gm.gamestate == 1 && possibleMoves != null) {
+                if (gm.gamestate == SELECTED && possibleMoves != null) {
                     if (possibleMoves[i][ii] == 1) {
                         DrawOnBoard(dot.getImage(), i, ii);
                     }
                     if (possibleMoves[i][ii] == 2) {
                         DrawOnBoard(border_red.getImage(), i, ii);
                     }
+                    if(possibleMoves[i][ii] == 3) {
+                        DrawOnBoard(border_green.getImage(), i, ii);
+                    }
+
                 }
             }
         }
@@ -185,19 +199,22 @@ public class MyPanel extends JPanel implements MouseListener {
 
     private void UndoMove() {
         if (!moveHistory.isEmpty()) {
-            Move lastMove = moveHistory.pop();
-            board[lastMove.firstx][lastMove.firsty] = lastMove.firstPiece;
-            board[lastMove.secondx][lastMove.secondy] = lastMove.secondPiece;
-            gm.gamestate = IDLE;
-            lastMove.firstPiece.increaseMoveCountBy(-1);
-            RemoveFromTakenPieces(lastMove.secondPiece);
+            while(!moveHistory.peek().isEmpty()){
+                Move lastMove = moveHistory.peek().remove();
+                board[lastMove.firstx][lastMove.firsty] = lastMove.firstPiece;
+                board[lastMove.secondx][lastMove.secondy] = lastMove.secondPiece;
+                gm.gamestate = IDLE;
+                lastMove.firstPiece.increaseMoveCountBy(-1);
+                RemoveFromTakenPieces(lastMove.secondPiece);
+            }
+            moveHistory.pop();
             ResetSelect();
             repaint();
             SwitchTurn();
         }
     }
 
-    private void AddToTakenPieces(Piece piece) {
+    public void AddToTakenPieces(Piece piece) {
         if (piece == null) {
             return;
         }
@@ -226,13 +243,16 @@ public class MyPanel extends JPanel implements MouseListener {
         }
     }
 
-    private void SwitchTurn() {
+    public void SwitchTurn() {
         current_turn = (current_turn + 1) % 2;
     }
 
     private void MakeMove() {
         //aktuelle figur, position, destinationfigur und position davon auf den stack
-        moveHistory.add(new Move(board[current_selected_x][current_selected_y], current_selected_x, current_selected_y, board[current_x][current_y], current_x, current_y));
+        //
+        Queue<Move> q = new LinkedList<>();
+        q.add(new Move(board[current_selected_x][current_selected_y], current_selected_x, current_selected_y, board[current_x][current_y], current_x, current_y));
+        moveHistory.add(q);
         board[current_selected_x][current_selected_y].increaseMoveCountBy(1);
         AddToTakenPieces(board[current_x][current_y]);
         board[current_x][current_y] = board[current_selected_x][current_selected_y];
@@ -241,6 +261,7 @@ public class MyPanel extends JPanel implements MouseListener {
         SwitchTurn();
         //update global gamestate
 
+
         System.out.println("main.Move-Abfrage");
     }
 
@@ -248,7 +269,7 @@ public class MyPanel extends JPanel implements MouseListener {
         //select square, put it in gamestate = 1
         ui[current_x][current_y] = new UIElement(border_yellow, "border_yellow");
         gm.gamestate = SELECTED;
-        possibleMoves = board[current_x][current_y].CalculatePossibleMoves(board, current_x, current_y);
+        possibleMoves = board[current_x][current_y].CalculatePossibleMoves(current_x, current_y);
         if (current_selected != null) {
             if (current_selected.id != board[current_x][current_y].id) {
                 //deselect old square
@@ -263,7 +284,7 @@ public class MyPanel extends JPanel implements MouseListener {
         System.out.println("selectsquare-Abfrage: moveCount: " + current_selected.moveCount);
     }
 
-    private void ResetSelect() {
+    public void ResetSelect() {
         ui[current_selected_x][current_selected_y] = null;
         gm.gamestate = IDLE;
         current_selected = null;
@@ -295,12 +316,19 @@ public class MyPanel extends JPanel implements MouseListener {
 
 
         if (e.getButton() == LEFTCLICK) {
-
             //prüfe, ob das ausgewählte Feld eine gegnerische Figur beinhaltet, oder frei ist
             if (gm.gamestate == SELECTED && (possibleMoves[current_x][current_y] == 2 || possibleMoves[current_x][current_y] == 1)) {
-                MakeMove();
+                if(possibleMoves[current_x][current_y] == 2 || possibleMoves[current_x][current_y] == 1){
+                    MakeMove();
+                    System.out.println("makemove");
+                }
+                //really useful for castles and upgrade etc.
+                else if(possibleMoves[current_x][current_y] == 3){
+                    System.out.println("specialmove");
+                    board[current_selected_x][current_selected_y].SpecialMove(current_x, current_y);
+                }
+                repaint();
             }
-
             //befindet sich dort eine Figur in deiner Farbe?
             else if (board[current_x][current_y] == null || board[current_x][current_y].color != current_turn) {
                 System.out.println("return-Abfrage");
@@ -308,7 +336,15 @@ public class MyPanel extends JPanel implements MouseListener {
             }
             //prüft ob das Feld markiert ist und setzt den selected gamestate ein (=1)
             else if (ui[current_x][current_y] == null) {
-                SelectPiece();
+                if(possibleMoves == null){
+                    System.out.println("b2");
+                    SelectPiece();
+                } else if (possibleMoves[current_x][current_y] != 3){
+                    SelectPiece();
+                } else {
+                    board[current_selected_x][current_selected_y].SpecialMove(current_x, current_y);
+                }
+
             }
 
             //Falls es schon selected ist (=1) setze den select bei weiterm klick zurück
@@ -319,17 +355,36 @@ public class MyPanel extends JPanel implements MouseListener {
                 }
             }
 
-
         }
         repaint();
+
+
         //DEBUG
+        /*
+        if(possibleMoves != null){
+            for(int[] ints : possibleMoves){
+                System.out.println("arr: " + Arrays.toString(ints));
+            }
+        }
         if (!takenPieces.isEmpty()) {
             System.out.println(takenPieces);
         } else {
             System.out.println("No taken Pieces");
         }
-        System.out.println(gm.score);
-    }
+
+
+        if(board[current_x][current_y] != null){
+            System.out.println("clicked on: " + board[current_x][current_y].character);
+            System.out.println("clicked Movecount: " + board[current_x][current_y].moveCount);
+        }
+        if(board[current_selected_x][current_selected_y] != null){
+            System.out.println("clicked on: " + board[current_selected_x][current_selected_y].character);
+            System.out.println("clicked Movecount: " + board[current_selected_x][current_selected_y].moveCount);
+        }
+         */
+
+        System.out.println(gm.gamestate);
+        }
 
 
     @Override

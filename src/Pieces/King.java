@@ -1,11 +1,16 @@
 package Pieces;
 
+import main.Move;
+import main.MyPanel;
 import main.NamedImage;
 import main.Vector2;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class King extends Piece{
-    public King(NamedImage image, String name, int color) {
-        super(image, name, color);
+    public King(NamedImage image, String name, int color, MyPanel panel) {
+        super(image, name, color, panel);
         character = 'K';
         value = 999;
         this.moveCount = 0;
@@ -21,13 +26,14 @@ public class King extends Piece{
         moveDirections[7] = new Vector2(-1, 1);
     }
     @Override
-    public int[][] CalculatePossibleMoves(Piece[][] board, int current_x, int current_y) {
+    public int[][] CalculatePossibleMoves(int current_x, int current_y) {
         int[][] possibleMoves = new int[gm.SQUARE_COUNT][gm.SQUARE_COUNT];
         for (int i = 0; i < gm.SQUARE_COUNT; i++) {
             for (int ii = 0; ii < gm.SQUARE_COUNT; ii++) {
                 possibleMoves[i][ii] = 0;
             }
         }
+        CheckForCastle(possibleMoves, current_x, current_y);
         int startx = current_x;
         int starty = current_y;
         for (Vector2 moveDirection : moveDirections) {
@@ -51,5 +57,67 @@ public class King extends Piece{
             }
         }
         return possibleMoves;
+    }
+
+    private void CheckForCastle(int[][] possibleMoves, int current_x, int current_y){
+        if(board[current_x][current_y].moveCount != 0){return;}
+        //King Side
+        if (board[current_x+3][current_y] != null) {
+            Piece kRook = board[current_x+3][current_y];
+            if(kRook != null && kRook.character == 'R' && kRook.moveCount == 0){
+                if(board[current_x+1][current_y] == null && board[current_x+2][current_y] == null){
+                    possibleMoves[current_x+3][current_y] = 3;
+                }
+            }
+        }
+
+        //Queen Side
+        if (board[current_x-4][current_y] != null) {
+            Piece qRook = board[current_x-4][current_y];
+            if(qRook != null && qRook.character == 'R' && qRook.moveCount == 0){
+                if(board[current_x-1][current_y] == null && board[current_x-2][current_y] == null && board[current_x-3][current_y] == null){
+                    possibleMoves[current_x-4][current_y] = 3;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void SpecialMove(int rook_x, int rook_y){
+        int king_x = panel.current_selected_x;
+        int king_y = panel.current_selected_y;
+        Piece rook = board[rook_x][rook_y];
+        Piece king = board[king_x][king_y];
+
+        panel.board[rook_x][rook_y].increaseMoveCountBy(1);
+        panel.board[king_x][king_y].increaseMoveCountBy(1);
+
+
+        Queue<Move> q = new LinkedList<>();
+
+        if(rook_x == 0){
+            q.add(new Move(board[king_x][king_y], king_x, king_y, board[king_x-2][king_y], king_x-2, king_y));
+            q.add(new Move(board[rook_x][rook_y], rook_x, rook_y, board[rook_x+3][rook_y], rook_x+3, rook_y));
+            board[rook_x+3][rook_y] = rook;
+            board[rook_x][rook_y] = null;
+            board[king_x-2][king_y] = king;
+            board[king_x][king_y] = null;
+        }
+        else if(rook_x == 7){
+            q.add(new Move(board[king_x][king_y], king_x, king_y, board[king_x+2][king_y], king_x+2, king_y));
+            q.add(new Move(board[rook_x][rook_y], rook_x, rook_y, board[rook_x-2][rook_y], rook_x-2, rook_y));
+            board[rook_x-2][rook_y] = rook;
+            board[rook_x][rook_y] = null;
+            board[king_x+2][king_y] = king;
+            board[king_x][king_y] = null;
+        }else{
+            System.out.println("Error: Wrong Rook coordinates");
+        }
+        panel.moveHistory.add(q);
+
+
+        panel.ResetSelect();
+        panel.SwitchTurn();
+
     }
 }

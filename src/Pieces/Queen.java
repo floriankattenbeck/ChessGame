@@ -1,11 +1,12 @@
 package Pieces;
 
+import main.MyPanel;
 import main.NamedImage;
 import main.Vector2;
 
 public class Queen extends Piece {
-    public Queen(NamedImage image, String name, int color) {
-        super(image, name, color);
+    public Queen(NamedImage image, String name, int color, MyPanel panel) {
+        super(image, name, color, panel);
         character = 'Q';
         value = 9;
         moveDirections = new Vector2[8];
