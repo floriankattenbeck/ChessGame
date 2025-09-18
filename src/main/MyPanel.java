@@ -21,15 +21,15 @@ public class MyPanel extends JPanel implements MouseListener {
     final int LIGHT = gm.LIGHT;
     final int IDLE = gm.IDLE;
     final int SELECTED = gm.SELECTED;
-    int current_turn = gm.startColor;
-    int current_x = 0;
-    int current_y = 0;
+    int current_turn = LIGHT;
+    int clicked_x = 0;
+    int clicked_y = 0;
     Piece current_selected = null;
-    public int current_selected_x = 0;
-    public int current_selected_y = 0;
+    public int selected_x = 0;
+    public int selected_y = 0;
     int score = gm.score;
-    NamedImage light_queen = new NamedImage("pieces/light_queen");
-    NamedImage dark_queen = new NamedImage("pieces/dark_queen");
+    public NamedImage light_queen = new NamedImage("pieces/light_queen");
+    public NamedImage dark_queen = new NamedImage("pieces/dark_queen");
     NamedImage light_bishop = new NamedImage("pieces/light_bishop");
     NamedImage dark_bishop = new NamedImage("pieces/dark_bishop");
     NamedImage dark_rook = new NamedImage("pieces/dark_rook");
@@ -61,31 +61,23 @@ public class MyPanel extends JPanel implements MouseListener {
     }
 
     private void SetupBoard() {
-        board[7][7] = new Rook(light_rook, "light_rook", LIGHT, this);
-        //board[6][7] = new Queen(light_queen, "light_queen", LIGHT, this);
-        board[0][7] = new Rook(light_rook, "light_rook", LIGHT, this);
-        board[4][7] = new King(light_king, "light_king", LIGHT, this);
-        board[7][0] = new Rook(dark_rook, "dark_rook", DARK, this);
-        board[0][0] = new Rook(dark_rook, "dark_rook", DARK, this);
-        board[4][0] = new King(dark_king, "dark_king", DARK, this);
-        System.out.println(" sc" + gm.startColor);
-        /*
-        if (current_turn == DARK) {
+
+        if (gm.boardOrientation == DARK) {
 
             //CHATGPT TEST CODE
             // Weiße Grundreihe (unten, y = 0)
-            board[0][0] = new Rook(light_rook, "light_rook", LIGHT);
-            board[1][0] = new Knight(light_knight, "light_knight", LIGHT);
-            board[2][0] = new Bishop(light_bishop, "light_bishop", LIGHT);
-            board[3][0] = new Queen(light_queen, "light_queen", LIGHT);
-            board[4][0] = new King(light_king, "light_king", LIGHT);
-            board[5][0] = new Bishop(light_bishop, "light_bishop", LIGHT);
-            board[6][0] = new Knight(light_knight, "light_knight", LIGHT);
-            board[7][0] = new Rook(light_rook, "light_rook", LIGHT);
+            board[0][0] = new Rook(light_rook, "light_rook", LIGHT, this);
+            board[1][0] = new Knight(light_knight, "light_knight", LIGHT, this);
+            board[2][0] = new Bishop(light_bishop, "light_bishop", LIGHT, this);
+            board[3][0] = new Queen(light_queen, "light_queen", LIGHT, this);
+            board[4][0] = new King(light_king, "light_king", LIGHT, this);
+            board[5][0] = new Bishop(light_bishop, "light_bishop", LIGHT, this);
+            board[6][0] = new Knight(light_knight, "light_knight", LIGHT, this);
+            board[7][0] = new Rook(light_rook, "light_rook", LIGHT, this);
 
             // Weiße Bauernreihe (y = 1)
             for (int x = 0; x < 8; x++) {
-                board[x][1] = new Pawn(light_pawn, "light_pawn", LIGHT);
+                board[x][1] = new Pawn(light_pawn, "light_pawn", LIGHT, this);
             }
 
             // Mittelfeld leer (y = 2..5)
@@ -97,32 +89,32 @@ public class MyPanel extends JPanel implements MouseListener {
 
             // Schwarze Bauernreihe (y = 6)
             for (int x = 0; x < 8; x++) {
-                board[x][6] = new Pawn(dark_pawn, "dark_pawn", DARK);
+                board[x][6] = new Pawn(dark_pawn, "dark_pawn", DARK, this);
             }
 
             // Schwarze Grundreihe (oben, y = 7)
-            board[0][7] = new Rook(dark_rook, "dark_rook", DARK);
-            board[1][7] = new Knight(dark_knight, "dark_knight", DARK);
-            board[2][7] = new Bishop(dark_bishop, "dark_bishop", DARK);
-            board[3][7] = new Queen(dark_queen, "dark_queen", DARK);
-            board[4][7] = new King(dark_king, "dark_king", DARK);
-            board[5][7] = new Bishop(dark_bishop, "dark_bishop", DARK);
-            board[6][7] = new Knight(dark_knight, "dark_knight", DARK);
-            board[7][7] = new Rook(dark_rook, "dark_rook", DARK);
+            board[0][7] = new Rook(dark_rook, "dark_rook", DARK, this);
+            board[1][7] = new Knight(dark_knight, "dark_knight", DARK, this);
+            board[2][7] = new Bishop(dark_bishop, "dark_bishop", DARK, this);
+            board[3][7] = new Queen(dark_queen, "dark_queen", DARK, this);
+            board[4][7] = new King(dark_king, "dark_king", DARK, this);
+            board[5][7] = new Bishop(dark_bishop, "dark_bishop", DARK, this);
+            board[6][7] = new Knight(dark_knight, "dark_knight", DARK, this);
+            board[7][7] = new Rook(dark_rook, "dark_rook", DARK, this);
         } else {
             // Schwarze Grundreihe (unten, y = 0)
-            board[0][0] = new Rook(dark_rook, "dark_rook", DARK);
-            board[1][0] = new Knight(dark_knight, "dark_knight", DARK);
-            board[2][0] = new Bishop(dark_bishop, "dark_bishop", DARK);
-            board[3][0] = new Queen(dark_queen, "dark_queen", DARK);
-            board[4][0] = new King(dark_king, "dark_king", DARK);
-            board[5][0] = new Bishop(dark_bishop, "dark_bishop", DARK);
-            board[6][0] = new Knight(dark_knight, "dark_knight", DARK);
-            board[7][0] = new Rook(dark_rook, "dark_rook", DARK);
+            board[0][0] = new Rook(dark_rook, "dark_rook", DARK, this);
+            board[1][0] = new Knight(dark_knight, "dark_knight", DARK, this);
+            board[2][0] = new Bishop(dark_bishop, "dark_bishop", DARK, this);
+            board[3][0] = new Queen(dark_queen, "dark_queen", DARK, this);
+            board[4][0] = new King(dark_king, "dark_king", DARK, this);
+            board[5][0] = new Bishop(dark_bishop, "dark_bishop", DARK, this);
+            board[6][0] = new Knight(dark_knight, "dark_knight", DARK, this);
+            board[7][0] = new Rook(dark_rook, "dark_rook", DARK, this);
 
             // Schwarze Bauernreihe (y = 1)
             for (int x = 0; x < 8; x++) {
-                board[x][1] = new Pawn(dark_pawn, "dark_pawn", DARK);
+                board[x][1] = new Pawn(dark_pawn, "dark_pawn", DARK, this);
             }
 
             // Mittelfeld leer (y = 2..5)
@@ -134,21 +126,19 @@ public class MyPanel extends JPanel implements MouseListener {
 
             // Weiße Bauernreihe (y = 6)
             for (int x = 0; x < 8; x++) {
-                board[x][6] = new Pawn(light_pawn, "light_pawn", LIGHT);
+                board[x][6] = new Pawn(light_pawn, "light_pawn", LIGHT, this);
             }
 
             // Weiße Grundreihe (oben, y = 7)
-            board[0][7] = new Rook(light_rook, "light_rook", LIGHT);
-            board[1][7] = new Knight(light_knight, "light_knight", LIGHT);
-            board[2][7] = new Bishop(light_bishop, "light_bishop", LIGHT);
-            board[3][7] = new Queen(light_queen, "light_queen", LIGHT);
-            board[4][7] = new King(light_king, "light_king", LIGHT);
-            board[5][7] = new Bishop(light_bishop, "light_bishop", LIGHT);
-            board[6][7] = new Knight(light_knight, "light_knight", LIGHT);
-            board[7][7] = new Rook(light_rook, "light_rook", LIGHT);
+            board[0][7] = new Rook(light_rook, "light_rook", LIGHT, this);
+            board[1][7] = new Knight(light_knight, "light_knight", LIGHT, this);
+            board[2][7] = new Bishop(light_bishop, "light_bishop", LIGHT, this);
+            board[3][7] = new Queen(light_queen, "light_queen", LIGHT, this);
+            board[4][7] = new King(light_king, "light_king", LIGHT, this);
+            board[5][7] = new Bishop(light_bishop, "light_bishop", LIGHT, this);
+            board[6][7] = new Knight(light_knight, "light_knight", LIGHT, this);
+            board[7][7] = new Rook(light_rook, "light_rook", LIGHT, this);
         }
-
-         */
     }
 
     public void paint(Graphics g) {
@@ -251,12 +241,12 @@ public class MyPanel extends JPanel implements MouseListener {
         //aktuelle figur, position, destinationfigur und position davon auf den stack
         //
         Queue<Move> q = new LinkedList<>();
-        q.add(new Move(board[current_selected_x][current_selected_y], current_selected_x, current_selected_y, board[current_x][current_y], current_x, current_y));
+        q.add(new Move(board[selected_x][selected_y], selected_x, selected_y, board[clicked_x][clicked_y], clicked_x, clicked_y));
         moveHistory.add(q);
-        board[current_selected_x][current_selected_y].increaseMoveCountBy(1);
-        AddToTakenPieces(board[current_x][current_y]);
-        board[current_x][current_y] = board[current_selected_x][current_selected_y];
-        board[current_selected_x][current_selected_y] = null;
+        board[selected_x][selected_y].increaseMoveCountBy(1);
+        AddToTakenPieces(board[clicked_x][clicked_y]);
+        board[clicked_x][clicked_y] = board[selected_x][selected_y];
+        board[selected_x][selected_y] = null;
         ResetSelect();
         SwitchTurn();
         //update global gamestate
@@ -267,25 +257,25 @@ public class MyPanel extends JPanel implements MouseListener {
 
     private void SelectPiece() {
         //select square, put it in gamestate = 1
-        ui[current_x][current_y] = new UIElement(border_yellow, "border_yellow");
+        ui[clicked_x][clicked_y] = new UIElement(border_yellow, "border_yellow");
         gm.gamestate = SELECTED;
-        possibleMoves = board[current_x][current_y].CalculatePossibleMoves(current_x, current_y);
+        possibleMoves = board[clicked_x][clicked_y].CalculatePossibleMoves(clicked_x, clicked_y);
         if (current_selected != null) {
-            if (current_selected.id != board[current_x][current_y].id) {
+            if (current_selected.id != board[clicked_x][clicked_y].id) {
                 //deselect old square
                 System.out.println("dazu noch deselect!");
-                ui[current_selected_x][current_selected_y] = null;
+                ui[selected_x][selected_y] = null;
             }
         }
         //update the current_selected values to new selected
-        current_selected = board[current_x][current_y];
-        current_selected_x = current_x;
-        current_selected_y = current_y;
+        current_selected = board[clicked_x][clicked_y];
+        selected_x = clicked_x;
+        selected_y = clicked_y;
         System.out.println("selectsquare-Abfrage: moveCount: " + current_selected.moveCount);
     }
 
     public void ResetSelect() {
-        ui[current_selected_x][current_selected_y] = null;
+        ui[selected_x][selected_y] = null;
         gm.gamestate = IDLE;
         current_selected = null;
         possibleMoves = null;
@@ -300,8 +290,8 @@ public class MyPanel extends JPanel implements MouseListener {
     public void mousePressed(MouseEvent e) {
         final int RIGHTCLICK = 3;
         final int LEFTCLICK = 1;
-        current_x = (e.getX() - this.getX()) / SQUARE_SIZE;
-        current_y = (e.getY() - this.getY()) / SQUARE_SIZE;
+        clicked_x = (e.getX() - this.getX()) / SQUARE_SIZE;
+        clicked_y = (e.getY() - this.getY()) / SQUARE_SIZE;
 
         if (e.getButton() == RIGHTCLICK) {
 //            if (ui[current_x][current_y] == null) {
@@ -317,39 +307,38 @@ public class MyPanel extends JPanel implements MouseListener {
 
         if (e.getButton() == LEFTCLICK) {
             //prüfe, ob das ausgewählte Feld eine gegnerische Figur beinhaltet, oder frei ist
-            if (gm.gamestate == SELECTED && (possibleMoves[current_x][current_y] == 2 || possibleMoves[current_x][current_y] == 1)) {
-                if(possibleMoves[current_x][current_y] == 2 || possibleMoves[current_x][current_y] == 1){
+            if (gm.gamestate == SELECTED && (possibleMoves[clicked_x][clicked_y] == 1 || possibleMoves[clicked_x][clicked_y] == 2 || possibleMoves[clicked_x][clicked_y] == 3)) {
+                if(possibleMoves[clicked_x][clicked_y] != 3){
                     MakeMove();
                     System.out.println("makemove");
                 }
                 //really useful for castles and upgrade etc.
-                else if(possibleMoves[current_x][current_y] == 3){
+                else if(possibleMoves[clicked_x][clicked_y] == 3){
                     System.out.println("specialmove");
-                    board[current_selected_x][current_selected_y].SpecialMove(current_x, current_y);
+                    board[selected_x][selected_y].SpecialMove(clicked_x, clicked_y);
                 }
-                repaint();
             }
             //befindet sich dort eine Figur in deiner Farbe?
-            else if (board[current_x][current_y] == null || board[current_x][current_y].color != current_turn) {
+            else if (board[clicked_x][clicked_y] == null || board[clicked_x][clicked_y].color != current_turn) {
                 System.out.println("return-Abfrage");
                 return;
             }
             //prüft ob das Feld markiert ist und setzt den selected gamestate ein (=1)
-            else if (ui[current_x][current_y] == null) {
+            else if (ui[clicked_x][clicked_y] == null) {
                 if(possibleMoves == null){
                     System.out.println("b2");
                     SelectPiece();
-                } else if (possibleMoves[current_x][current_y] != 3){
+                } else if (possibleMoves[clicked_x][clicked_y] != 3){
                     SelectPiece();
                 } else {
-                    board[current_selected_x][current_selected_y].SpecialMove(current_x, current_y);
+                    board[selected_x][selected_y].SpecialMove(clicked_x, clicked_y);
                 }
 
             }
 
             //Falls es schon selected ist (=1) setze den select bei weiterm klick zurück
-            else if (ui[current_x][current_y].name.equals("border_yellow")) {
-                if (current_selected.id == board[current_x][current_y].id) {
+            else if (ui[clicked_x][clicked_y].name.equals("border_yellow")) {
+                if (current_selected.id == board[clicked_x][clicked_y].id) {
                     ResetSelect();
                     System.out.println("deselect square selbes feld-Abfrage");
                 }

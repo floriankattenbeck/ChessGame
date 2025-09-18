@@ -1,8 +1,12 @@
 package Pieces;
 
+import main.Move;
 import main.MyPanel;
 import main.NamedImage;
 import main.Vector2;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class Pawn extends Piece {
     public Pawn(NamedImage image, String name, int color, MyPanel panel) {
@@ -16,42 +20,74 @@ public class Pawn extends Piece {
     }
 
     @Override
-    public int[][] CalculatePossibleMoves(int current_x, int current_y) {
+    public int[][] CalculatePossibleMoves(int clicked_x, int clicked_y) {
         int[][] possibleMoves = new int[gm.SQUARE_COUNT][gm.SQUARE_COUNT];
         for (int i = 0; i < gm.SQUARE_COUNT; i++) {
             for (int ii = 0; ii < gm.SQUARE_COUNT; ii++) {
                 possibleMoves[i][ii] = 0;
             }
         }
-        int startx = current_x;
-        int starty = current_y;
+        int startx = clicked_x;
+        int starty = clicked_y;
         for (Vector2 moveDirection : moveDirections) {
+            moveDirection.y = board[startx][starty].color != gm.boardOrientation ? 1 : moveDirection.y;
+            clicked_x = startx + moveDirection.x;
+            clicked_y = starty + moveDirection.y;
 
-            current_x = startx + moveDirection.x;
-            current_y = starty + moveDirection.y;
-
-            if (current_x >= possibleMoves.length || current_x < 0 || current_y >= possibleMoves.length || current_y < 0) {
+            if (clicked_x >= possibleMoves.length || clicked_x < 0 || clicked_y >= possibleMoves.length || clicked_y < 0) {
                 continue;
             }
-            if (board[startx][starty].color != gm.startColor) {
-                moveDirection.y = 1;
-                current_y = starty + moveDirection.y;
-            }
-            if (board[current_x][current_y] == null && moveDirection.x == 0) {
-                //mark it a 1 for free square
-                possibleMoves[current_x][current_y] = 1;
 
-                if (moveCount == 0 && current_y + moveDirection.y > 0) {
-                    possibleMoves[current_x][current_y + moveDirection.y] = 1;
+            if (board[clicked_x][clicked_y] == null && moveDirection.x == 0) {
+                //mark it a 1 for free square
+                possibleMoves[clicked_x][clicked_y] = 1;
+
+                if (moveCount == 0 && clicked_y + moveDirection.y > 0) {
+                    possibleMoves[clicked_x][clicked_y + moveDirection.y] = 1;
                 }
 
-            } else if (board[current_x][current_y] != null) {
+            } else if (board[clicked_x][clicked_y] != null) {
                 //make it a 2 for takeable piece
-                if (board[current_x][current_y].color != board[startx][starty].color && moveDirection.x != 0) {
-                    possibleMoves[current_x][current_y] = 2;
+                if (board[clicked_x][clicked_y].color != board[startx][starty].color && moveDirection.x != 0) {
+                    possibleMoves[clicked_x][clicked_y] = 2;
                 }
             }
         }
+        CheckForUpgrade(possibleMoves, startx, starty);
         return possibleMoves;
+    }
+
+    public void CheckForUpgrade(int[][] possibleMoves, int startx, int starty) {
+        int ygoal;
+        if (board[startx][starty].color == gm.boardOrientation) {
+            ygoal = 0;
+        } else {
+            ygoal = 7;
+        }
+
+        if(starty + moveDirections[0].y != ygoal){return;}
+
+        possibleMoves[startx][starty + moveDirections[0].y] = 3;
+
+    }
+
+    @Override
+    public void SpecialMove(int clicked_x, int clicked_y) {
+        //Change pawn to whatever piece you want
+        Queue<Move> q = new LinkedList<>();
+        q.add(new Move(panel.board[panel.selected_x][panel.selected_y], panel.selected_x, panel.selected_y, panel.board[clicked_x][clicked_y], clicked_x, clicked_y));
+
+        if(panel.board[panel.selected_x][panel.selected_y].color == gm.LIGHT){
+            System.out.println("light");
+            panel.board[clicked_x][clicked_y] = new Queen(panel.light_queen, "light_queen", gm.LIGHT, panel);
+        } else {
+            System.out.println("dark");
+            panel.board[clicked_x][clicked_y] = new Queen(panel.dark_queen, "dark_queen", gm.DARK, panel);
+        }
+        q.add(new Move(panel.board[clicked_x][clicked_y], panel.selected_x, panel.selected_y, panel.board[clicked_x][clicked_y], clicked_x, clicked_y));
+
+        panel.board[panel.selected_x][panel.selected_y] = null;
+
+
     }
 }

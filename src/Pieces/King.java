@@ -50,7 +50,7 @@ public class King extends Piece{
                 possibleMoves[current_x][current_y] = 1;
 
             } else {
-                //make it a 2 for takeab e piece
+                //make it a 2 for takeable e piece
                 if (board[current_x][current_y].color != board[startx][starty].color) {
                     possibleMoves[current_x][current_y] = 2;
                 }
@@ -84,8 +84,8 @@ public class King extends Piece{
 
     @Override
     public void SpecialMove(int rook_x, int rook_y){
-        int king_x = panel.current_selected_x;
-        int king_y = panel.current_selected_y;
+        int king_x = panel.selected_x;
+        int king_y = panel.selected_y;
         Piece rook = board[rook_x][rook_y];
         Piece king = board[king_x][king_y];
 
