@@ -52,7 +52,6 @@ public class Pawn extends Piece {
                     possibleMoves[clicked_x][clicked_y] = 2;
                 }
             }
-            System.out.println("123");
             CheckForUpgrade(possibleMoves, startx, starty, moveDirection);
         }
         return possibleMoves;
@@ -66,11 +65,7 @@ public class Pawn extends Piece {
             ygoal = 7;
         }
         if(starty + moveDirection.y == ygoal){
-            if(moveDirection.x == 0){
-                possibleMoves[startx + moveDirection.x][starty + moveDirection.y] = 3;
-            } else {
-                possibleMoves[startx + moveDirection.x][starty + moveDirection.y] = 3;
-            }
+            possibleMoves[startx + moveDirection.x][starty + moveDirection.y] = 3;
         }
 
     }
@@ -87,10 +82,8 @@ public class Pawn extends Piece {
             panel.AddToTakenPieces(board[clicked_x][clicked_y]);
         }
         if(panel.board[panel.selected_x][panel.selected_y].color == gm.LIGHT){
-            System.out.println("light");
             panel.board[clicked_x][clicked_y] = new Queen(panel.light_queen, "light_queen", gm.LIGHT, panel);
         } else {
-            System.out.println("dark");
             panel.board[clicked_x][clicked_y] = new Queen(panel.dark_queen, "dark_queen", gm.DARK, panel);
         }
         panel.board[panel.selected_x][panel.selected_y] = null;
