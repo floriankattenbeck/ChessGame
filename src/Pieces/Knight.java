@@ -27,7 +27,7 @@ public class Knight extends Piece{
         int startx = current_x;
         int starty = current_y;
         for (Vector2 moveDirection : moveDirections) {
-            while (true) {
+            for(int i = 0; i < 4 ; i++){
                 current_x = startx + moveDirection.x;
                 current_y = starty + moveDirection.y;
 
