@@ -110,7 +110,7 @@ public class MyPanel extends JPanel implements MouseListener {
             board[4][0] = new King(dark_king, "dark_king", DARK, this);
             board[5][0] = new Bishop(dark_bishop, "dark_bishop", DARK, this);
             board[6][0] = new Knight(dark_knight, "dark_knight", DARK, this);
-            board[7][0] = new Rook(dark_rook, "dark_rook", DARK, this);
+            //board[7][0] = new Rook(dark_rook, "dark_rook", DARK, this);
 
             // Schwarze Bauernreihe (y = 1)
             for (int x = 0; x < 8; x++) {
@@ -138,6 +138,7 @@ public class MyPanel extends JPanel implements MouseListener {
             board[5][7] = new Bishop(light_bishop, "light_bishop", LIGHT, this);
             board[6][7] = new Knight(light_knight, "light_knight", LIGHT, this);
             board[7][7] = new Rook(light_rook, "light_rook", LIGHT, this);
+            board[7][1] = new Pawn(light_pawn, "light_pawn", LIGHT, this);
         }
     }
 
@@ -315,6 +316,7 @@ public class MyPanel extends JPanel implements MouseListener {
                 //really useful for castles and upgrade etc.
                 else if(possibleMoves[clicked_x][clicked_y] == 3){
                     System.out.println("specialmove");
+                    System.out.println("board[selected_x][selected_y] " + selected_x + " | " + selected_y);
                     board[selected_x][selected_y].SpecialMove(clicked_x, clicked_y);
                 }
             }

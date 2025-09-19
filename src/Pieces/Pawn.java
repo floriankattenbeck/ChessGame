@@ -52,22 +52,26 @@ public class Pawn extends Piece {
                     possibleMoves[clicked_x][clicked_y] = 2;
                 }
             }
+            System.out.println("123");
+            CheckForUpgrade(possibleMoves, startx, starty, moveDirection);
         }
-        CheckForUpgrade(possibleMoves, startx, starty);
         return possibleMoves;
     }
 
-    public void CheckForUpgrade(int[][] possibleMoves, int startx, int starty) {
+    public void CheckForUpgrade(int[][] possibleMoves, int startx, int starty, Vector2 moveDirection) {
         int ygoal;
         if (board[startx][starty].color == gm.boardOrientation) {
             ygoal = 0;
         } else {
             ygoal = 7;
         }
-
-        if(starty + moveDirections[0].y != ygoal){return;}
-
-        possibleMoves[startx][starty + moveDirections[0].y] = 3;
+        if(starty + moveDirection.y == ygoal){
+            if(moveDirection.x == 0){
+                possibleMoves[startx + moveDirection.x][starty + moveDirection.y] = 3;
+            } else {
+                possibleMoves[startx + moveDirection.x][starty + moveDirection.y] = 3;
+            }
+        }
 
     }
 
@@ -75,8 +79,13 @@ public class Pawn extends Piece {
     public void SpecialMove(int clicked_x, int clicked_y) {
         //Change pawn to whatever piece you want
         Queue<Move> q = new LinkedList<>();
+
         q.add(new Move(panel.board[panel.selected_x][panel.selected_y], panel.selected_x, panel.selected_y, panel.board[clicked_x][clicked_y], clicked_x, clicked_y));
 
+        if(panel.board[clicked_x][clicked_y] != null){
+            q.add(new Move(board[panel.selected_x][panel.selected_y], panel.selected_x, panel.selected_y, board[clicked_x][clicked_y], clicked_x, clicked_y));
+            panel.AddToTakenPieces(board[clicked_x][clicked_y]);
+        }
         if(panel.board[panel.selected_x][panel.selected_y].color == gm.LIGHT){
             System.out.println("light");
             panel.board[clicked_x][clicked_y] = new Queen(panel.light_queen, "light_queen", gm.LIGHT, panel);
@@ -84,9 +93,11 @@ public class Pawn extends Piece {
             System.out.println("dark");
             panel.board[clicked_x][clicked_y] = new Queen(panel.dark_queen, "dark_queen", gm.DARK, panel);
         }
-        q.add(new Move(panel.board[clicked_x][clicked_y], panel.selected_x, panel.selected_y, panel.board[clicked_x][clicked_y], clicked_x, clicked_y));
-
         panel.board[panel.selected_x][panel.selected_y] = null;
+        panel.moveHistory.add(q);
+        panel.SwitchTurn();
+        panel.ResetSelect();
+
 
 
     }
