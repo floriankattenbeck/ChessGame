@@ -4,11 +4,11 @@ import Pieces.Piece;
 
 public class Move {
     public Piece firstPiece;
-    int firstx;
-    int firsty;
+    public int firstx;
+    public int firsty;
     public Piece secondPiece;
-    int secondx;
-    int secondy;
+    public int secondx;
+    public int secondy;
 
     public Move(Piece firstPiece, int firstx, int firsty, Piece secondPiece, int secondx, int secondy){
         this.firstPiece = firstPiece;

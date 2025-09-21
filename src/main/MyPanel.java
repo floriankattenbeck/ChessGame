@@ -176,6 +176,9 @@ public class MyPanel extends JPanel implements MouseListener {
                     if(possibleMoves[i][ii] == 3) {
                         DrawOnBoard(border_green.getImage(), i, ii);
                     }
+                    if(possibleMoves[i][ii] == 4) {
+                        DrawOnBoard(dot.getImage(), i, ii);
+                    }
 
                 }
             }
@@ -303,8 +306,8 @@ public class MyPanel extends JPanel implements MouseListener {
 
         if (e.getButton() == LEFTCLICK) {
             //prüfe, ob das ausgewählte Feld eine gegnerische Figur beinhaltet, oder frei ist
-            if (gm.gamestate == SELECTED && (possibleMoves[clicked_x][clicked_y] == 1 || possibleMoves[clicked_x][clicked_y] == 2 || possibleMoves[clicked_x][clicked_y] == 3)) {
-                if(possibleMoves[clicked_x][clicked_y] != 3){
+            if (gm.gamestate == SELECTED && (possibleMoves[clicked_x][clicked_y] != 0)) {
+                if(possibleMoves[clicked_x][clicked_y] == 1 || possibleMoves[clicked_x][clicked_y] == 2){
                     MakeMove();
                     System.out.println("makemove");
                 }
@@ -312,6 +315,10 @@ public class MyPanel extends JPanel implements MouseListener {
                 else if(possibleMoves[clicked_x][clicked_y] == 3){
                     System.out.println("specialmove");
                     board[selected_x][selected_y].SpecialMove(clicked_x, clicked_y);
+                }
+                else if(possibleMoves[clicked_x][clicked_y] == 4){
+                    System.out.println("secondspecialmove");
+                    board[selected_x][selected_y].SecondSpecialMove(clicked_x, clicked_y);
                 }
             }
             //befindet sich dort eine Figur in deiner Farbe?

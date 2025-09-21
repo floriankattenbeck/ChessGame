@@ -95,4 +95,9 @@ public class Piece {
     public void SpecialMove(int current_x, int current_y){
         //
     }
+
+    public void SecondSpecialMove(int current_x, int current_y){
+        //
+    }
+
 }

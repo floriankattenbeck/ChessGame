@@ -53,8 +53,30 @@ public class Pawn extends Piece {
                 }
             }
             CheckForUpgrade(possibleMoves, startx, starty, moveDirection);
+            CheckForEnPassant(possibleMoves, startx, starty, moveDirection);
         }
         return possibleMoves;
+    }
+
+    private void CheckForEnPassant(int[][] possibleMoves, int startx, int starty, Vector2 moveDirection) {
+        try {
+            Move lastMove = panel.moveHistory.peek().peek();
+            if(lastMove.firstPiece.character != 'P'){
+                System.out.println("last move wasn't made my a pawn.");
+                return;
+            }
+            if(Math.abs(lastMove.secondy - lastMove.firsty) < 2){
+                System.out.println("the last move was not a 2 step");
+                return;
+            }
+            if(lastMove.secondy == starty && Math.abs(lastMove.secondx - startx) == 1){
+                System.out.println("En Passant!");
+                possibleMoves[lastMove.secondx][lastMove.secondy+moveDirection.y] = 4;
+            }
+        } catch (Exception e){
+            System.out.println("there is no last move");
+        }
+
     }
 
     public void CheckForUpgrade(int[][] possibleMoves, int startx, int starty, Vector2 moveDirection) {
@@ -67,14 +89,12 @@ public class Pawn extends Piece {
         if(starty + moveDirection.y == ygoal){
             possibleMoves[startx + moveDirection.x][starty + moveDirection.y] = 3;
         }
-
     }
 
     @Override
     public void SpecialMove(int clicked_x, int clicked_y) {
         //Change pawn to whatever piece you want
         Queue<Move> q = new LinkedList<>();
-
         q.add(new Move(panel.board[panel.selected_x][panel.selected_y], panel.selected_x, panel.selected_y, panel.board[clicked_x][clicked_y], clicked_x, clicked_y));
 
         if(panel.board[clicked_x][clicked_y] != null){
@@ -90,8 +110,24 @@ public class Pawn extends Piece {
         panel.moveHistory.add(q);
         panel.SwitchTurn();
         panel.ResetSelect();
-
-
-
     }
+    @Override
+    public void SecondSpecialMove(int clicked_x, int clicked_y){
+        moveDirections[0].y = board[panel.selected_x][panel.selected_y].color != gm.boardOrientation ? 1 : moveDirections[0].y;
+        System.out.println("en passant move method called");
+        //Change pawn to whatever piece you want
+        Queue<Move> q = new LinkedList<>();
+        q.add(new Move(board[panel.selected_x][panel.selected_y], panel.selected_x, panel.selected_y, board[clicked_x][clicked_y], clicked_x, clicked_y));
+
+        board[panel.selected_x][panel.selected_y].increaseMoveCountBy(1);
+        panel.AddToTakenPieces(board[clicked_x][clicked_y]);
+        board[clicked_x][clicked_y] = board[panel.selected_x][panel.selected_y];
+        board[panel.selected_x][panel.selected_y] = null;
+        board[clicked_x][clicked_y-moveDirections[0].y] = null;
+
+        panel.moveHistory.add(q);
+        panel.SwitchTurn();
+        panel.ResetSelect();
+    }
+
 }
